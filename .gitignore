@@ -1,3 +1,11 @@
+﻿.vscode-test/
+.vscode/
+build/
+*.vsix
+dist
+node_modules
+out
+
 # Prerequisites
 *.d
 
