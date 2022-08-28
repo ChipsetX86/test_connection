@@ -78,11 +78,12 @@ struct message {
 
 struct udp_sender::pimpl {
     pimpl(const std::string &address, uint16_t port): 
+        resolver(context),
         socket(context, udp::endpoint(udp::v4(), 0)) {
-            udp::resolver resolver(context);
-            udp::endpoint endpoint = *resolver.resolve(udp::v4(), address, to_string(port)).begin();
+            endpoint = *resolver.resolve(udp::v4(), address, to_string(port)).begin();
         };
     asio::io_context context; 
+    udp::resolver resolver;
     udp::socket socket;
     udp::endpoint endpoint;
 };
@@ -112,11 +113,13 @@ void udp_sender::start()
                 m.payload[j] = rand();
             }
             m.time_ms = get_time_stamp();
-            m.md5_payload = md5(m.payload.data(), m.payload.size() * sizeof(uint8_t));
+            size_t payload_size =  m.payload.size() * sizeof(decltype(*m.payload.data()));
+            m.md5_payload = md5(m.payload.data(), payload_size);
 
             auto packet_data = m.to_raw_data();
-            m_pimpl->socket.send_to(asio::buffer(packet_data.data(), packet_data.size() * sizeof(uint8_t)), m_pimpl->endpoint, {}, ec);
-            if (!ec.value()) {
+            m_pimpl->socket.send_to(asio::buffer(packet_data.data(), packet_data.size() * sizeof(decltype(*m.payload.data()))), 
+                                    m_pimpl->endpoint, {}, ec);
+            if (ec.value()) {
                 std::cout << "Error sent packet" << std::endl;
             } else {
                 std::cout << "Sent: #" << to_string(m.number)  << " #" << format_time(m.time_ms) << std::endl;

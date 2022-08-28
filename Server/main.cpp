@@ -4,8 +4,8 @@
 
 #include "udp_sender.h"
 
-const auto HOST_FOR_SENDING = "localhost";
-const uint16_t PORT_HOST_FOR_SENDING = 50000;
+const auto HOST_FOR_SENDING = "127.0.0.1";
+const uint16_t PORT_HOST_FOR_SENDING = 50'000;
 
 int main(int argc, char *argv[])
 {

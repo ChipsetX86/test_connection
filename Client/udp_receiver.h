@@ -17,6 +17,8 @@ public:
 private:
     struct pimpl;
     std::unique_ptr<pimpl> m_pimpl;
+
+    void receive();
 };
 
 #endif
