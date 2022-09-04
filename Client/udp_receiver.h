@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include <memory>
 
+#include "../common/message.h"
+
 class udp_receiver
 {
 public:
@@ -13,8 +15,12 @@ public:
     ~udp_receiver();
 
     void start();
+    bool get_message(udp_message &);
 
 private:
+    udp_receiver(udp_receiver const & ) = delete;
+    udp_receiver& operator=(udp_receiver const &) = delete;
+
     struct pimpl;
     std::unique_ptr<pimpl> m_pimpl;
 

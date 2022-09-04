@@ -10,7 +10,8 @@
 
 #include <asio.hpp>
 
-#include "md5/md5.h"
+#include "../third_party/md5/md5.h"
+#include "../common/message.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -45,37 +46,6 @@ std::string format_time(time_t timestamp)
 	return std::string(res);
 }
 
-using raw_data = vector<uint8_t>;
-
-struct message {
-    uint64_t number;
-    time_t time_ms;
-    raw_data payload;
-    string md5_payload;
-    raw_data to_raw_data() const {
-        raw_data result;
-        auto size_payload = payload.size() * sizeof(decltype(*payload.data()));
-        auto size_md5 =  md5_payload.size() * sizeof(decltype(*md5_payload.data()));
-        result.resize(sizeof(number) + 
-                      sizeof(time_ms) +
-                      sizeof(size_t) + 
-                      size_payload + 
-                      size_md5);
-        auto ptr = result.data();
-        memcpy(ptr, &number, sizeof(number));
-        ptr += sizeof(number);
-        memcpy(ptr, &time_ms, sizeof(time_ms));
-        ptr += sizeof(time_ms);
-        memcpy(ptr, &size_payload, sizeof(size_payload));
-        ptr += sizeof(size_payload);
-        memcpy(ptr, payload.data(), size_payload);
-        ptr += sizeof(size_payload);
-        memcpy(ptr, md5_payload.data(), size_md5);
-        ptr += sizeof(size_md5);
-        return result;              
-    }
-};
-
 struct udp_sender::pimpl {
     pimpl(const std::string &address, uint16_t port): 
         resolver(context),
@@ -106,7 +76,7 @@ void udp_sender::start()
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
     for (auto k = 0; k < COUNT_BATCH; ++k) {
         for (auto i = 0; i < BATCH_SIZE; ++i) {
-            message m;
+            udp_message m;
             m.number = counter++;
             m.payload.resize(rand() % (MAX_COUNT_BYTES + 1 - MIN_COUNT_BYTES) + MIN_COUNT_BYTES);
             for (size_t j = 0; j < m.payload.size(); j++) {

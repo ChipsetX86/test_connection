@@ -16,8 +16,10 @@ public:
     void start();
 
 private:
-     struct pimpl;
-     std::unique_ptr<pimpl> m_pimpl;
+    udp_sender(udp_sender const & ) = delete;
+    udp_sender& operator=(udp_sender const &) = delete;
+    struct pimpl;
+    std::unique_ptr<pimpl> m_pimpl;
 };
 
 #endif
