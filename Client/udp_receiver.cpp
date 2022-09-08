@@ -28,8 +28,8 @@ struct udp_receiver::pimpl {
     uint8_t buffer[SIZE_BUFFER];
 
     vector<udp_message> ring_buffer;
-    size_t index_ring_buffer = 0;
-    size_t index_last_item = 0;
+    size_t index_write_ring_buffer = 0;
+    size_t index_read_last_ring_buffer = 0;
     std::mutex mutex_ring_buffer;
     void add_message_in_ring_buffer(udp_message);
     bool get_message(udp_message &);
@@ -38,10 +38,11 @@ struct udp_receiver::pimpl {
 void udp_receiver::pimpl::add_message_in_ring_buffer(udp_message message)
 {
     std::lock_guard<std::mutex> lck(mutex_ring_buffer);
-    ring_buffer[index_ring_buffer] = message;
-    index_ring_buffer++;
-    if (index_ring_buffer >= SIZE_RING_BUFFER) {
-        index_ring_buffer = 0;
+    std::cout << "ADD PACKET " << std::to_string(message.number) << endl;
+    ring_buffer[index_write_ring_buffer] = message;
+    index_write_ring_buffer++;
+    if (index_write_ring_buffer >= SIZE_RING_BUFFER) {
+        index_write_ring_buffer = 0;
     }
 }
 
@@ -93,14 +94,24 @@ bool udp_receiver::get_message(udp_message &mes)
 bool udp_receiver::pimpl::get_message(udp_message &mes)
 {
   std::lock_guard<std::mutex> lck(mutex_ring_buffer);
-  if (index_last_item == index_ring_buffer && ring_buffer[index_last_item].empty()) {
+  size_t counter = 0;
+  while (ring_buffer[index_read_last_ring_buffer].empty() && counter < SIZE_RING_BUFFER) {
+    index_read_last_ring_buffer++;
+    if (index_read_last_ring_buffer >= SIZE_RING_BUFFER) {
+      index_read_last_ring_buffer = 0;
+    } 
+    counter++;
+  }
+
+  if (ring_buffer[index_read_last_ring_buffer].empty()) {
+      index_read_last_ring_buffer = index_write_ring_buffer;
       return false;
   }
-  mes = ring_buffer[index_last_item];
-  ring_buffer[index_last_item].clear();
-  index_last_item++;
-  if (index_last_item >= SIZE_RING_BUFFER) {
-      index_last_item = 0;
+  mes = ring_buffer[index_read_last_ring_buffer];
+  ring_buffer[index_read_last_ring_buffer].clear();
+  index_read_last_ring_buffer++;
+  if (index_read_last_ring_buffer >= SIZE_RING_BUFFER) {
+      index_read_last_ring_buffer = 0;
   }
   return true;
 }
