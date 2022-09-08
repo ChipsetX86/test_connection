@@ -59,8 +59,8 @@ void processing::start()
             if (!receiver) {
                 break;
             }
-            packet.clear();
             if (receiver->get_message(packet)) {
+                packet.clear();
                 bool test = false;
                 if (!packet.payload.empty()) {
                     test = md5(packet.payload.data(), packet.payload.size() * sizeof(decltype(packet.payload)::value_type)) == 
