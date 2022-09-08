@@ -17,12 +17,12 @@ using namespace std;
 using namespace std::chrono;
 using asio::ip::udp;
 
-const auto COUNT_BATCH = 2;
-const auto BATCH_SIZE = 1000;
-const auto INTERVAL_SEND_PACKET = 10ms;
-const auto SLEEP_TIME = 10s;
-const auto MIN_COUNT_BYTES = 600;
-const auto MAX_COUNT_BYTES = 1600;
+constexpr auto COUNT_BATCH = 2;
+constexpr auto BATCH_SIZE = 1000;
+constexpr auto INTERVAL_SEND_PACKET = 10ms;
+constexpr auto SLEEP_TIME = 10s;
+constexpr auto MIN_COUNT_BYTES = 600;
+constexpr auto MAX_COUNT_BYTES = 1600;
 
 time_t get_time_stamp()
 {
