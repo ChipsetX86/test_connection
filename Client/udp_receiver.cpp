@@ -54,7 +54,6 @@ void udp_receiver::pimpl::add_message_in_ring_buffer(udp_message message)
 {
     std::lock_guard<std::mutex> lck(mutex_ring_buffer);
     ring_index(index_write_ring_buffer);
-    std::cout << "ADD PACKET " << std::to_string(message.number) << endl;
     ring_buffer[index_write_ring_buffer] = message;
     increase_ring_index(index_write_ring_buffer);
 }
