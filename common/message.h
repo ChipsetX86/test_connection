@@ -21,8 +21,8 @@ struct udp_message {
         md5_payload.clear();
         payload.clear();
     }
-    bool empty() {
-        return payload.empty();
+    bool empty() const {
+        return !number && payload.empty();
     }
     raw_data to_raw_data() const {
         raw_data result;
