@@ -3,9 +3,9 @@
 #include <iostream>
 #include <memory>
 #include <thread>
-#include <chrono>
 #include <cstdlib>
-#include <ctime>
+#include <time.h>
+#include <chrono>
 #include <cstring>
 
 #include <asio.hpp>
@@ -39,10 +39,9 @@ std::string format_time(time_t timestamp)
 	auto mTime = std::chrono::milliseconds(milli);
 	auto tp = std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds>(mTime);
 	auto tt = std::chrono::system_clock::to_time_t(tp);
-	std::tm now;
-	gmtime_s(&now, &tt);   
+	std::tm now = *gmtime(&tt);   
 	char res[14] = { 0 };
-	sprintf_s(res, sizeof(res), "%02d:%02d:%02d.%03d", now.tm_hour, now.tm_min, now.tm_sec, static_cast<int>(milli % 100));
+	sprintf(res, "%02d:%02d:%02d.%03d", now.tm_hour, now.tm_min, now.tm_sec, static_cast<int>(milli % 100));
 	return std::string(res);
 }
 

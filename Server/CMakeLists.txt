@@ -9,4 +9,7 @@ add_executable(Server main.cpp
                       udp_sender.cpp
                       ../third_party/md5/md5.cpp)
 
+if (UNIX) 
+    target_link_libraries(Server PRIVATE pthread)  # boost_system boost_thread
+endif()
 target_link_libraries(Server PRIVATE asio)

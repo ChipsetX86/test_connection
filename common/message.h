@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <stdint.h>
+#include <cstring>
 
 using raw_data = std::vector<uint8_t>;
 
@@ -33,7 +34,7 @@ struct udp_message {
                       size_payload + 
                       size_md5);
         auto ptr = result.data();
-        memcpy(ptr, &number, sizeof(number));
+        std::memcpy(ptr, &number, sizeof(number));
         ptr += sizeof(number);
         memcpy(ptr, &time_ms, sizeof(time_ms));
         ptr += sizeof(time_ms);
@@ -52,7 +53,7 @@ struct udp_message {
         }
 
         auto ptr = data.data();
-        memcpy(&number, ptr, sizeof(number));
+        std::memcpy(&number, ptr, sizeof(number));
         ptr += sizeof(number);
 
         memcpy(&time_ms, ptr, sizeof(time_ms));
@@ -75,7 +76,7 @@ struct udp_message {
             return false;
         } 
         md5_payload.resize(size_md5);
-        memcpy(md5_payload.data(), ptr, size_md5);
+        std::memcpy(md5_payload.data(), ptr, size_md5);
 
         return true;
     }

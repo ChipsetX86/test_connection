@@ -9,4 +9,7 @@ add_executable(Client main.cpp
                       processing.cpp
                       ../third_party/md5/md5.cpp)
 
+if (UNIX) 
+    target_link_libraries(Client PRIVATE pthread) 
+endif()
 target_link_libraries(Client PRIVATE asio)
